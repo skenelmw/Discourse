@@ -1,5 +1,8 @@
 import { CharacterData } from "./types";
+import { Client } from "pg";
 import fs from "fs";
+import * as dotenv from 'dotenv'
+dotenv.config()
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type Data = { message: string }
@@ -22,13 +25,16 @@ export default async function fetcher(
     } while (next);
 
     console.log("received " + data.length + " results")
-    fs.writeFile('./pages/api/rick/rick_api.json', JSON.stringify(data, null, 2), (error) => {
-        if (error) {
-            console.log(error)
-        }
-        else {
-            console.log(`wrote file okay bro`)
-        }
-    });
+    console.log(data[69].id)
+    const client = new Client(process.env.DATABASE_URL)
+    client.connect()
+
+    data.map((character) => {
+        return client.query(`
+        INSERT INTO rick (name, status, origin_name, origin_url, location_name, location_url, image, id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `, [character.name, character.status, character.origin.name, character.origin.url, character.location.name, character.location.url, character.image, character.id])
+    })
+
     return res.status(200).json({message: "hi"})
 }
