@@ -1,19 +1,28 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { Response } from './types'
+import { Client } from 'pg';
 import characters from './rick_api.json'
 
-export default function handler (
+export default async function handler (
     req: NextApiRequest,
     res:NextApiResponse<Response>
 ) {
     const { page, name } = req.query;
+    const client = new Client(process.env.DATABASE_URL)
+    client.connect()
     
 
-    const list =  name && typeof name === "string" ? 
-        characters.filter(({name: completeName}) => {
-            return completeName.toLowerCase().includes(name.toLowerCase());
-        }) : characters
+    let list = []  
+    if(name && typeof name === "string"){
+        const { rows } = await client.query({text: `SELECT name, status, origin_name, origin_url, location_name, location_url, image, id 
+        FROM rick WHERE LOWER(name) LIKE CONCAT('%', $1::TEXT, '%')`, values: [name.toLowerCase()]})
+        list = rows
+    } else {
+        const { rows } = await client.query(`SELECT name, status, origin_name, origin_url, location_name, location_url, image, id 
+        FROM rick`)
+        list = rows
+    }
     if (page && typeof page === "string" && !Number.isNaN(parseInt(page))){
         const actualNumber = parseInt(page);
         const results = list.slice((actualNumber - 1) * 10, (actualNumber - 1) * 10 + 10 );
