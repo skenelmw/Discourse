@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Image from 'next/image'
 import { useSession } from "@supabase/auth-helpers-react";
 import styles from '../styles/Home.module.css'
+import Link from 'next/link';
 
 
 const Home: NextPage = () => {
@@ -19,13 +20,11 @@ const Home: NextPage = () => {
 
         <p className={styles.description}>
           A personal project by Lily Skene
-
-          <code className={styles.code}>pages/index.tsx</code>
-          
         </p>
         <p>
           User: { session && <code>{ JSON.stringify(session.user) }</code>  }
         </p>
+        <Link href="/new_room">Create a new Chat room here</Link>
       </main>
 
       <footer className={styles.footer}>
