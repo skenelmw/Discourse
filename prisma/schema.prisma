@@ -25,3 +25,12 @@ model rick {
   createdAt     DateTime @default(now()) @db.Timestamp(6)
   species       String?
 }
+
+model rooms {
+  id              BigInt    @id @unique @default(autoincrement())
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  host_id         String    @db.Uuid
+  participant_ids String[]  @db.Uuid
+  latest_message  DateTime? @db.Timestamptz(6)
+  room_name       String    @default("")
+}

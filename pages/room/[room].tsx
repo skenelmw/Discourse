@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-export default function Channel () {
+export default function Room () {
     const router = useRouter()
 
     const channelId = router.query.channel;
