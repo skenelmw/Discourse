@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
-type Data = { message: string }
+type Data = { message: string } | { room: bigint }
 
 export default async function handler (
     req: NextApiRequest,
@@ -28,7 +28,10 @@ export default async function handler (
         },
     })
 
-    // maybe do some error handling here as required?
-    return room
+    const roomId = room.id
 
+    // maybe do some error handling here as required?
+    room
+    return res.status(200).json({room: roomId})
+    
 }
